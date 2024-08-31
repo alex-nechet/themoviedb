@@ -26,7 +26,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     TheMovieDbTheme {
-        BuildConfig.API_KEY
         MovieListScreen.Content()
     }
 }

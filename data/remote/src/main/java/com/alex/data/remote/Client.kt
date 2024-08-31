@@ -15,7 +15,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-fun client(baseUrl: String) = HttpClient(Android) {
+fun client(
+    baseUrl: String,
+    authToken : String,
+    isDebuggable : Boolean
+) = HttpClient(Android) {
     install(ContentNegotiation) {
         json(
             Json {
@@ -31,24 +35,27 @@ fun client(baseUrl: String) = HttpClient(Android) {
         }
     }
 
-    install(Logging) {
-        logger = object : Logger {
-            override fun log(message: String) {
-                Log.v("Logger Ktor =>", message)
+    if(isDebuggable) {
+        install(Logging) {
+            logger = object : Logger {
+                override fun log(message: String) {
+                    Log.v("Logger Ktor =>", message)
+                }
             }
+
+            level = LogLevel.ALL
         }
 
-        level = LogLevel.ALL
-    }
-
-    install(ResponseObserver) {
-        onResponse { response ->
-            Log.d("HTTP status:", "${response.status.value}")
+        install(ResponseObserver) {
+            onResponse { response ->
+                Log.d("HTTP status:", "${response.status.value}")
+            }
         }
     }
 
     install(DefaultRequest) {
-        header(HttpHeaders.ContentType, Json)
+        header(HttpHeaders.Authorization, "Bearer $authToken" )
+        header(HttpHeaders.Accept, Json)
         url(baseUrl)
     }
 }

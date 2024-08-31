@@ -41,7 +41,7 @@ android {
         defaultConfig {
             Properties().apply {
                 load(project.rootProject.file("local.properties").inputStream())
-                buildConfigField("String", "API_KEY", "\"${getProperty("ApiKey")}\"")
+                buildConfigField("String", "API_KEY", "\"${getProperty("AccessToken")}\"")
             }
         }
     }
@@ -68,6 +68,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":data:remote"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -76,6 +78,11 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
