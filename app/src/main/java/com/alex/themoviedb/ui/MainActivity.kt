@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.alex.themoviedb.BuildConfig
 import com.alex.themoviedb.theme.TheMovieDbTheme
 import com.alex.themoviedb.ui.list.MovieListScreen
 
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     TheMovieDbTheme {
+        BuildConfig.API_KEY
         MovieListScreen.Content()
     }
 }
