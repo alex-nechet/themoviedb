@@ -52,9 +52,12 @@ object MovieListScreen {
     }
 
     @Composable
-    fun PagingStateItem(state: LoadState, notLoadingItem: @Composable () -> Unit = {}) {
+    fun PagingStateItem(
+        state: LoadState,
+        content: @Composable () -> Unit = {}
+    ) {
         when (state) {
-            is LoadState.NotLoading -> notLoadingItem()
+            is LoadState.NotLoading -> content()
             is LoadState.Loading -> CircularProgressIndicator()
             is LoadState.Error -> Text(text = state.error.message.orEmpty())
         }
