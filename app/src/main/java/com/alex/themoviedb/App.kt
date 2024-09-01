@@ -2,6 +2,7 @@ package com.alex.themoviedb
 
 import android.app.Application
 import com.alex.themoviedb.di.domain
+import com.alex.themoviedb.di.presentation
 import com.alex.themoviedb.di.remote
 import com.alex.themoviedb.di.repository
 import org.koin.android.ext.koin.androidContext
@@ -14,7 +15,7 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(remote, repository, domain)
+            modules(remote, repository, domain, presentation)
         }
     }
 }

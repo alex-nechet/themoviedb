@@ -42,6 +42,8 @@ android {
             Properties().apply {
                 load(project.rootProject.file("local.properties").inputStream())
                 buildConfigField("String", "API_KEY", "\"${getProperty("AccessToken")}\"")
+                buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3/\"")
+                buildConfigField("String", "IMAGE_URL_W500", "\"https://image.tmdb.org/t/p/w500\"")
             }
         }
     }
@@ -81,8 +83,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation (libs.androidx.paging.runtime)
-
+    implementation(libs.androidx.paging.compose)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
+    implementation(libs.coil.compose)
 }

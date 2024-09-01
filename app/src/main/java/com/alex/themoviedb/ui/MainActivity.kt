@@ -9,6 +9,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.alex.themoviedb.BuildConfig
 import com.alex.themoviedb.theme.TheMovieDbTheme
 import com.alex.themoviedb.ui.list.MovieListScreen
+import com.alex.themoviedb.ui.list.MovieListViewModel
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +19,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TheMovieDbTheme {
-                MovieListScreen.Content()
+                MovieListScreen.Content(
+                    viewModel = koinViewModel<MovieListViewModel>()
+                )
             }
         }
     }
@@ -26,6 +31,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     TheMovieDbTheme {
-        MovieListScreen.Content()
+//        MovieListScreen.Content()
     }
 }

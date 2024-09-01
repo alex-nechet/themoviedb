@@ -12,7 +12,7 @@ import io.ktor.client.request.parameter
 class MovieDbRemoteDataSourceImpl(
     authToken: String,
     isDebuggable: Boolean,
-    baseUrl: String = "https://api.themoviedb.org/3/",
+    baseUrl: String,
 ) : PagingSource<Int, MovieDto>() {
     private val client = client(
         baseUrl = baseUrl,
@@ -31,7 +31,9 @@ class MovieDbRemoteDataSourceImpl(
         return try {
             val page = params.key ?: 1
             val response: PagedResponse<MovieDto> =
-                client.get("discover/movie").body<PagedResponse<MovieDto>>()
+                client.get("discover/movie") {
+                    parameter("page", page)
+                }.body<PagedResponse<MovieDto>>()
 
             LoadResult.Page(
                 data = response.results,

@@ -5,8 +5,9 @@ import com.alex.domain.movies.entity.Movie
 
 
 fun MovieDto.toEntity() = Movie(
+    id = id,
     title = title.orEmpty(),
-    posterPath = posterPath?.drop(1).orEmpty(),
+    posterPath = posterPath.orEmpty(),
     releaseDate = releaseDate.orEmpty(),
     overview = overview.orEmpty()
 )
