@@ -21,4 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "TheMovieDb"
 include(":app")
+
+include(":domain:movies")
+
 include(":data:remote")
+include(":data:repository")
