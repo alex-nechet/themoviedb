@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.alex.domain.movies.usecase.GetMoviesUseCase
+import kotlinx.coroutines.flow.retry
 
 class MovieListViewModel(
-    private val getMoviesUseCase: GetMoviesUseCase
+    getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
-
     val movies = getMoviesUseCase().cachedIn(viewModelScope)
 }

@@ -8,6 +8,7 @@ fun MovieDto.toEntity() = Movie(
     id = id,
     title = title.orEmpty(),
     posterPath = posterPath.orEmpty(),
+    backdropPath = backdropPath.orEmpty(),
     releaseDate = releaseDate.orEmpty(),
     overview = overview.orEmpty()
 )

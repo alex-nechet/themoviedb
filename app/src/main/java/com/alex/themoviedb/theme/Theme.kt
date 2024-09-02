@@ -42,7 +42,6 @@ fun TheMovieDbTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography,
         content = content
     )
 }

@@ -8,6 +8,6 @@ enum class ImageSize {
 infix fun String.buildImageWithSize(imageSize: ImageSize) = when {
     this.isEmpty() -> ""
     imageSize == ImageSize.W500 -> BuildConfig.IMAGE_URL_W500 + this
-    imageSize == ImageSize.ORIGINAL -> ""
+    imageSize == ImageSize.ORIGINAL -> BuildConfig.IMAGE_URL_ORIGINAL + this
     else -> ""
 }

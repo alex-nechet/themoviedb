@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -44,6 +45,7 @@ android {
                 buildConfigField("String", "API_KEY", "\"${getProperty("AccessToken")}\"")
                 buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3/\"")
                 buildConfigField("String", "IMAGE_URL_W500", "\"https://image.tmdb.org/t/p/w500\"")
+                buildConfigField("String", "IMAGE_URL_ORIGINAL", "\"https://image.tmdb.org/t/p/original\"")
             }
         }
     }
@@ -77,10 +79,12 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation (libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
     implementation (libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -88,4 +92,5 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.coil.compose)
+    implementation(libs.kotlinx.serialization.json)
 }

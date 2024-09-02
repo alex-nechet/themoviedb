@@ -11,6 +11,7 @@ composeBom = "2024.08.00"
 ktor = "2.3.12"
 kotlinx-serialization = "1.7.2"
 koin-bom = "4.0.0-RC1"
+navigationCompose = " 2.8.0-rc1"
 paging = "3.3.2"
 appcompat = "1.7.0"
 material = "1.12.0"
@@ -19,6 +20,7 @@ kotlinx-coroutines = "1.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }

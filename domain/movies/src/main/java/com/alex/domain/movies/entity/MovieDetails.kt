@@ -1,6 +1,6 @@
 package com.alex.domain.movies.entity
 
-data class Movie(
+data class MovieDetails(
     val id: Long,
     val title: String,
     val posterPath: String,
