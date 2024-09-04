@@ -23,22 +23,24 @@ fun PosterAndOverview(
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
 ) {
-    Row(modifier = modifier) {
-        AsyncImage(
-            modifier = Modifier.height(256.dp),
-            model = posterPath buildImageWithSize ImageSize.W500,
-            contentScale = ContentScale.Fit,
-            contentDescription = null
-        )
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            style = MaterialTheme.typography.bodyMedium,
-            text = overview,
-            maxLines = maxLines,
-            overflow = TextOverflow.Ellipsis
-        )
+    if (posterPath.isNotEmpty() || overview.isNotEmpty()) {
+        Row(modifier = modifier) {
+            AsyncImage(
+                modifier = Modifier.height(256.dp),
+                model = posterPath buildImageWithSize ImageSize.W500,
+                contentScale = ContentScale.Fit,
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                text = overview,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 

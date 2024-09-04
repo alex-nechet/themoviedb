@@ -3,15 +3,12 @@ package com.alex.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import androidx.paging.map
 import com.alex.data.mapper.toEntity
 import com.alex.data.remote.datasource.MovieDbRemoteDataSource
-import com.alex.data.remote.dto.MovieDto
-import com.alex.data.remote.dto.PagedResponse
 import com.alex.domain.movies.entity.Movie
 import com.alex.domain.movies.entity.MovieDetails
+import com.alex.domain.movies.entity.Sorting
 import com.alex.domain.movies.repository.MovieDbRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,10 +21,22 @@ class MovieDbRepositoryImpl(
     private val remoteDataSource: MovieDbRemoteDataSource,
     private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : MovieDbRepository {
-    override fun getMoviesList(pageSize: Int): Flow<PagingData<Movie>> =
+    override fun getMoviesList(
+        keywords: String,
+        sortBy: Sorting,
+        releaseDate: String,
+        pageSize: Int
+    ): Flow<PagingData<Movie>> =
         Pager(
             config = PagingConfig(pageSize = pageSize),
-            pagingSourceFactory = { MovieListPagingSource(remoteDataSource) }
+            pagingSourceFactory = {
+                MovieListPagingSource(
+                    remoteDataSource = remoteDataSource,
+                    keywords = keywords,
+                    sortBy = sortBy,
+                    releaseDate = releaseDate
+                )
+            }
         )
             .flow
             .map { data -> data.map { it.toEntity() } }

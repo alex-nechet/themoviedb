@@ -2,12 +2,17 @@ package com.alex.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.alex.data.mapper.toDto
 import com.alex.data.remote.datasource.MovieDbRemoteDataSource
-import com.alex.data.remote.dto.MovieDto
-import com.alex.data.remote.dto.PagedResponse
+import com.alex.data.remote.dto.response.MovieDto
+import com.alex.data.remote.dto.response.PagedResponse
+import com.alex.domain.movies.entity.Sorting
 
 class MovieListPagingSource(
-    private val remoteDataSource: MovieDbRemoteDataSource
+    private val remoteDataSource: MovieDbRemoteDataSource,
+    private val keywords: String,
+    private val sortBy: Sorting,
+    private val releaseDate: String
 ) : PagingSource<Int, MovieDto>() {
     override fun getRefreshKey(state: PagingState<Int, MovieDto>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -19,7 +24,12 @@ class MovieListPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieDto> {
         return try {
             val page = params.key ?: 1
-            val response: PagedResponse<MovieDto> = remoteDataSource.fetchMovieList(page)
+            val response: PagedResponse<MovieDto> = remoteDataSource.fetchMovieList(
+                keywords = keywords,
+                sortBy = sortBy.toDto(),
+                releaseDate = releaseDate,
+                page = page
+            )
 
             LoadResult.Page(
                 data = response.results,

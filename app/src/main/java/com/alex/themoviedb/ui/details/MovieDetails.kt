@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -25,8 +26,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alex.domain.movies.entity.Genres
 import com.alex.domain.movies.entity.MovieDetails
+import com.alex.domain.movies.entity.ProductionCountries
+import com.alex.themoviedb.R
 import com.alex.themoviedb.ui.common.ErrorContent
 import com.alex.themoviedb.ui.common.PosterAndOverview
 
@@ -110,7 +116,10 @@ object MovieDetails {
                     onRetryClick = { onAction(MovieDetailsAction.Refresh) }
                 )
 
-                MovieDetailsUiState.Loading -> CircularProgressIndicator()
+                MovieDetailsUiState.Loading -> Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator()
+                }
+
                 is MovieDetailsUiState.Success -> MovieDetailsMainContent(
                     movieDetails = state.movieDetails,
                     modifier = Modifier.padding(16.dp)
@@ -120,33 +129,58 @@ object MovieDetails {
     }
 
     @Composable
-    private fun MovieDetailsMainContent(movieDetails: MovieDetails, modifier: Modifier = Modifier) {
+    private fun MovieDetailsMainContent(
+        movieDetails: MovieDetails,
+        modifier: Modifier = Modifier
+    ) {
         Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-            Text(
-                style = MaterialTheme.typography.headlineSmall,
-                text = movieDetails.tagline
-            )
+            val budget = movieDetails.budget
+            val revenue = movieDetails.revenue
+
+            if (movieDetails.tagline.isNotEmpty()) {
+                Text(
+                    style = MaterialTheme.typography.headlineSmall,
+                    text = movieDetails.tagline
+                )
+            }
+
             PosterAndOverview(
                 posterPath = movieDetails.posterPath,
                 overview = movieDetails.overview,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
-            DetailsItem("Release Date" to movieDetails.releaseDate)
-            ChipRow(label = "Origin Country", chips = movieDetails.originCountry)
-            ChipRow(label = "Genres", chips = movieDetails.genres.map { it.name })
-            ChipRow(label = "Production", chips = movieDetails.productionCompanies.map { it.name })
+
+            if (movieDetails.releaseDate.isNotEmpty()) {
+                DetailsItem(stringResource(R.string.release_date) to movieDetails.releaseDate)
+            }
+
+            if (budget != null && (budget > 0)) {
+                DetailsItem(stringResource(R.string.budget) to movieDetails.budget.toString())
+            }
+
+            if (revenue != null && (revenue > 0)) {
+                DetailsItem(stringResource(R.string.revenue) to movieDetails.revenue.toString())
+            }
+
             ChipRow(
-                label = "Production Countries",
+                label = stringResource(R.string.origin_country),
+                chips = movieDetails.originCountry
+            )
+
+            ChipRow(
+                label = stringResource(R.string.genres),
+                chips = movieDetails.genres.map { it.name }
+            )
+
+            ChipRow(
+                label = stringResource(R.string.production),
+                chips = movieDetails.productionCompanies.map { it.name }
+            )
+
+            ChipRow(
+                label = stringResource(R.string.production_countries),
                 chips = movieDetails.productionCountries.map { it.name }
             )
-        }
-    }
-
-    @Composable
-    private fun DetailsItem(values: Pair<String, String>) {
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
-            Text(modifier = Modifier.weight(1f), text = "${values.first}:")
-            Text(modifier = Modifier, text = values.second)
         }
     }
 
@@ -157,22 +191,64 @@ object MovieDetails {
         chips: List<String>,
         modifier: Modifier = Modifier
     ) {
-        Row(modifier = modifier) {
-            Text(
-                modifier = Modifier.padding(vertical = 12.dp),
-                text = "${label}:"
-            )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                chips.forEach {
-                    AssistChip(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        label = { Text(text = it) },
-                        onClick = {})
+        if (chips.isNotEmpty()) {
+            Row(modifier = modifier) {
+                Text(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    text = "${label}:"
+                )
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    chips.forEach {
+                        AssistChip(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            label = { Text(text = it) },
+                            onClick = {})
+                    }
                 }
             }
         }
     }
+
+    @Composable
+    private fun DetailsItem(values: Pair<String, String>) {
+        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+            Text(modifier = Modifier.weight(1f), text = "${values.first}:")
+            Text(modifier = Modifier, text = values.second)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MovieDetailPreview() {
+    val movieDetails = MovieDetails(
+        id = 0,
+        budget = 100000,
+        overview = "Really nice movie",
+        tagline = "You must see it!",
+        title = "Best movie ever",
+        backdropPath = "",
+        originCountry = listOf("DE"),
+        originalLanguage = "DE",
+        originalTitle = "Best movie ever",
+        posterPath = "",
+        popularity = 5.0,
+        genres = listOf(Genres("Action")),
+        releaseDate = "2024-09-09",
+        productionCompanies = listOf(),
+        productionCountries = listOf(ProductionCountries("Germany")),
+        revenue = 1000000,
+        voteAverage = 5.0
+    )
+
+
+    com.alex.themoviedb.ui.details.MovieDetails.Content(
+        title = "Movie Title",
+        state = MovieDetailsUiState.Success(movieDetails),
+        onAction = {}
+    )
 }

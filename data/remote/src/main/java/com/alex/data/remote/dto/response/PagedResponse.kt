@@ -1,4 +1,4 @@
-package com.alex.data.remote.dto
+package com.alex.data.remote.dto.response
 
 import kotlinx.serialization.Serializable
 
