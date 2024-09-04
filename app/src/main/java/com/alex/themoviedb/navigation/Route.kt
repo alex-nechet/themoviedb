@@ -8,5 +8,5 @@ sealed class Route {
     data object List : Route()
 
     @Serializable
-    data class Details(val movieId: Long) : Route()
+    data class Details(val movieId: Long, val title: String) : Route()
 }

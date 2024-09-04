@@ -36,7 +36,6 @@ class MovieDbRepositoryImpl(
 
     override suspend fun getMovieDetails(movieId: Long): MovieDetails =
         withContext(coroutineContext) {
-            remoteDataSource.fetchMovieDetails(movieId)
-            return@withContext MovieDetails(0, "", "", "", "", "")
+            remoteDataSource.fetchMovieDetails(movieId).toEntity()
         }
 }

@@ -51,7 +51,13 @@ object MovieList {
             modifier = modifier,
             onAction = { action ->
                 when (action) {
-                    is ListScreenAction.OpenDetails -> navigate(Route.Details(action.movieId))
+                    is ListScreenAction.OpenDetails -> navigate(
+                        Route.Details(
+                            action.movieId,
+                            action.title
+                        )
+                    )
+
                     ListScreenAction.Retry -> data.retry()
                 }
             }
@@ -86,7 +92,7 @@ object MovieList {
                 val item = data[index]
                 PagingItem(
                     item = item,
-                    onItemClick = { onAction(ListScreenAction.OpenDetails(it)) }
+                    onItemClick = { id, title -> onAction(ListScreenAction.OpenDetails(id, title)) }
                 )
             }
 
@@ -116,13 +122,13 @@ object MovieList {
     @Composable
     private fun PagingItem(
         item: Movie?,
-        onItemClick: (Long) -> Unit,
+        onItemClick: (Long, String) -> Unit,
         modifier: Modifier = Modifier
     ) {
         item?.let {
             Card(
                 modifier = modifier,
-                onClick = { onItemClick(it.id) }
+                onClick = { onItemClick(it.id, it.title) }
             ) {
                 Box(
                     modifier = Modifier

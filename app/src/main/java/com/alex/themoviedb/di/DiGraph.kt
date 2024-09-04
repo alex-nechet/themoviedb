@@ -36,5 +36,7 @@ val domain = module {
 
 val presentation = module {
     viewModelOf(::MovieListViewModel)
-    viewModel { (movieId: Long) -> MovieDetailsViewModel(movieId) }
+    viewModel { (movieId: Long) ->
+        MovieDetailsViewModel(movieId = movieId, getMovieDetailsUseCase = get())
+    }
 }

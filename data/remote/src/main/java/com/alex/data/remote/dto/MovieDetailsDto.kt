@@ -21,9 +21,6 @@ data class MovieDetailsDto(
     @SerialName("backdrop_path")
     val backdropPath: String?,
 
-    @SerialName("belongs_to_collection")
-    val belongsToCollection: String?,
-
     @SerialName("imdb_id")
     val imdbId: String?,
 
