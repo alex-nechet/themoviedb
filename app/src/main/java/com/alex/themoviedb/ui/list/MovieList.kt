@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -34,6 +33,7 @@ import com.alex.themoviedb.ImageSize
 import com.alex.themoviedb.buildImageWithSize
 import com.alex.themoviedb.navigation.Route
 import com.alex.themoviedb.ui.common.ErrorContent
+import com.alex.themoviedb.ui.common.PosterAndOverview
 import kotlinx.coroutines.flow.flowOf
 
 object MovieList {
@@ -133,31 +133,21 @@ object MovieList {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(256.dp)
+                        .wrapContentHeight()
                 ) {
                     Column {
-                        TitleBar(it.title, it.releaseDate)
-                        Row {
-                            AsyncImage(
-                                modifier = Modifier.height(256.dp),
-                                model = it.posterPath buildImageWithSize ImageSize.W500,
-                                contentScale = ContentScale.Fit,
-                                contentDescription = null
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                style = MaterialTheme.typography.bodyMedium,
-                                text = it.overview,
-                                maxLines = 6,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        TitleBar(title = it.title, releaseDate = it.releaseDate)
+                        PosterAndOverview(
+                            posterPath = it.posterPath,
+                            overview = it.overview,
+                            maxLines = 6
+                        )
                     }
 
                     AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .height(256.dp)
+                            .align(Alignment.BottomCenter),
                         alpha = 0.2f,
                         model = it.backdropPath buildImageWithSize ImageSize.W500,
                         contentScale = ContentScale.FillBounds,

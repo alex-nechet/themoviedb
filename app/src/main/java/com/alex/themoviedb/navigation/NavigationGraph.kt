@@ -23,7 +23,8 @@ fun NavGraphBuilder.appGraph(navController: NavHostController) {
         val route = it.toRoute<Route.Details>()
         MovieDetails.Screen(
             title = route.title,
-            viewModel = koinViewModel<MovieDetailsViewModel> { parametersOf(route.movieId) }
+            viewModel = koinViewModel<MovieDetailsViewModel> { parametersOf(route.movieId) },
+            onBackClick = { navController.popBackStack() }
         )
     }
 }

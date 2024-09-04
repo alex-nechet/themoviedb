@@ -86,7 +86,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.material3)
-    implementation (libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
