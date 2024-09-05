@@ -8,7 +8,6 @@ import com.alex.data.mapper.toEntity
 import com.alex.data.remote.datasource.MovieDbRemoteDataSource
 import com.alex.domain.movies.entity.Movie
 import com.alex.domain.movies.entity.MovieDetails
-import com.alex.domain.movies.entity.MovieSuggestions
 import com.alex.domain.movies.entity.Sorting
 import com.alex.domain.movies.repository.MovieDbRepository
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +48,7 @@ class MovieDbRepositoryImpl(
 
     override fun getMovieSuggestions(
         query: String, pageSize: Int
-    ): Flow<PagingData<MovieSuggestions>> = Pager(
+    ): Flow<PagingData<Movie>> = Pager(
         config = PagingConfig(pageSize = pageSize),
         pagingSourceFactory = {
             MovieSuggestionPagingSource(

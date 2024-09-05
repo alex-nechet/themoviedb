@@ -4,7 +4,6 @@ import com.alex.data.remote.client
 import com.alex.data.remote.dto.request.SortingParam
 import com.alex.data.remote.dto.response.MovieDetailsDto
 import com.alex.data.remote.dto.response.MovieDto
-import com.alex.data.remote.dto.response.MovieSuggestionDto
 import com.alex.data.remote.dto.response.PagedResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -43,7 +42,7 @@ class MovieDbRemoteDataSourceImpl(
         parameter("page", page)
         parameter("query", query)
     }
-        .body<PagedResponse<MovieSuggestionDto>>()
+        .body<PagedResponse<MovieDto>>()
         .also { client.close() }
 
     override suspend fun fetchMovieDetails(

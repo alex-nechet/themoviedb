@@ -4,13 +4,11 @@ import com.alex.data.remote.dto.request.SortingParam
 import com.alex.data.remote.dto.response.GenresDto
 import com.alex.data.remote.dto.response.MovieDetailsDto
 import com.alex.data.remote.dto.response.MovieDto
-import com.alex.data.remote.dto.response.MovieSuggestionDto
 import com.alex.data.remote.dto.response.ProductionCompaniesDto
 import com.alex.data.remote.dto.response.ProductionCountriesDto
 import com.alex.domain.movies.entity.Genres
 import com.alex.domain.movies.entity.Movie
 import com.alex.domain.movies.entity.MovieDetails
-import com.alex.domain.movies.entity.MovieSuggestions
 import com.alex.domain.movies.entity.ProductionCompanies
 import com.alex.domain.movies.entity.ProductionCountries
 import com.alex.domain.movies.entity.Sorting
@@ -58,4 +56,3 @@ fun Sorting.toDto() = when (this) {
     Sorting.RELEASE_DATE_DESC -> SortingParam.RELEASE_DATE_DESC
 }
 
-fun MovieSuggestionDto.toEntity() = MovieSuggestions(id = id, title = title)

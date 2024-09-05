@@ -7,26 +7,32 @@ import com.alex.domain.movies.usecase.SearchMoviesUseCase
 import com.alex.domain.movies.usecase.GetMoviesUseCase
 import com.alex.themoviedb.convertMillisToDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 
 class MovieListViewModel(
     getMoviesUseCase: GetMoviesUseCase,
     searchMoviesUseCase: SearchMoviesUseCase
 ) : ViewModel() {
+    private val query = MutableStateFlow("")
 
     val movies = getMoviesUseCase(
         releaseDate = System.currentTimeMillis().convertMillisToDate()
     ).cachedIn(viewModelScope)
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val searchResults = query.debounce(DEBOUNCE_MILLIS)
+        .flatMapLatest {
+            searchMoviesUseCase(it)
+        }
+        .cachedIn(viewModelScope)
 
-    val query = MutableStateFlow("")
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val suggestions = query.flatMapLatest { searchMoviesUseCase(it) }.cachedIn(viewModelScope)
-
-
-    init {
-        query.value = ""
+    fun setQuery(query: String) {
+        this@MovieListViewModel.query.tryEmit(query)
     }
+
 }
+
+private const val DEBOUNCE_MILLIS = 500L

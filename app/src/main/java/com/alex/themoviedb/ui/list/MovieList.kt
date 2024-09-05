@@ -42,7 +42,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.alex.domain.movies.entity.Movie
-import com.alex.domain.movies.entity.MovieSuggestions
 import com.alex.themoviedb.ImageSize
 import com.alex.themoviedb.R
 import com.alex.themoviedb.buildImageWithSize
@@ -60,11 +59,11 @@ object MovieList {
         navigate: (Route) -> Unit
     ) {
         val data = viewModel.movies.collectAsLazyPagingItems()
-        val suggestions = viewModel.suggestions.collectAsLazyPagingItems()
+        val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
 
         Content(
             data = data,
-            suggestions = suggestions,
+            searchResults = searchResults,
             modifier = modifier,
             onAction = { action ->
                 when (action) {
@@ -73,7 +72,7 @@ object MovieList {
                     )
 
                     ListScreenAction.Retry -> data.retry()
-                    is ListScreenAction.Search -> viewModel.query.value = action.query
+                    is ListScreenAction.Search -> viewModel.setQuery(action.query)
                 }
             }
         )
@@ -83,7 +82,7 @@ object MovieList {
     @Composable
     fun Content(
         data: LazyPagingItems<Movie>,
-        suggestions: LazyPagingItems<MovieSuggestions>,
+        searchResults: LazyPagingItems<Movie>,
         modifier: Modifier = Modifier,
         onAction: (ListScreenAction) -> Unit,
     ) {
@@ -120,53 +119,30 @@ object MovieList {
                 )
             },
             content = { paddingValues ->
-                LazyColumn(
-                    modifier = modifier
-                        .padding(paddingValues)
-                        .fillMaxSize(),
-                    state = rememberLazyListState(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                val payload = if (query.value.isEmpty()) data else searchResults
 
-                    item {
-                        PagingStateItem(
-                            state = data.loadState.refresh,
-                            content = { StickyHeader() },
-                            onRetryClick = { onAction(ListScreenAction.Retry) }
-                        )
-                    }
+                MainContent(
+                    modifier = Modifier.padding(paddingValues),
+                    data = payload,
+                    onAction = onAction
+                )
 
-                    items(
-                        count = data.itemCount,
-                        key = { it },
-                    ) { index ->
-                        val item = data[index]
-                        PagingItem(
-                            item = item,
-                            onItemClick = {  onAction(ListScreenAction.OpenDetails(it)) }
-                        )
-                    }
 
-                    item {
-                        PagingStateItem(
-                            state = data.loadState.append,
-                            onRetryClick = { onAction(ListScreenAction.Retry) })
-                    }
-                }
+                val autocompleteHeight = if (searchResults.itemCount > 0) 256.dp else 0.dp
 
                 LazyColumn(
                     modifier = Modifier
-                        .wrapContentHeight()
+                        .height(autocompleteHeight)
                         .padding(vertical = 72.dp)
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.surface),
                     state = rememberLazyListState(),
                 ) {
                     items(
-                        count = suggestions.itemCount,
+                        count = searchResults.itemCount,
                         key = { it },
                     ) { index ->
-                        val item = suggestions[index]
+                        val item = searchResults[index]
                         item?.let {
                             SuggestionChip(
                                 modifier = Modifier.fillMaxWidth(),
@@ -184,15 +160,56 @@ object MovieList {
     }
 
     @Composable
-    private fun StickyHeader() {
-        Card(modifier = Modifier.fillMaxWidth()) {
+    private fun MainContent(
+        modifier: Modifier = Modifier,
+
+        data: LazyPagingItems<Movie>,
+        onAction: (ListScreenAction) -> Unit
+    ) {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize(),
+            state = rememberLazyListState(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+            item {
+                PagingStateItem(
+                    state = data.loadState.refresh,
+                    content = { StickyHeader(hasResults = data.itemCount > 0) },
+                    onRetryClick = { onAction(ListScreenAction.Retry) }
+                )
+            }
+
+            items(
+                count = data.itemCount,
+                key = { it },
+            ) { index ->
+                val item = data[index]
+                PagingItem(
+                    item = item,
+                    onItemClick = { onAction(ListScreenAction.OpenDetails(it)) }
+                )
+            }
+
+            item {
+                PagingStateItem(
+                    state = data.loadState.append,
+                    onRetryClick = { onAction(ListScreenAction.Retry) })
+            }
+        }
+    }
+
+    @Composable
+    private fun StickyHeader(hasResults: Boolean, modifier: Modifier = Modifier) {
+        Card(modifier = modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
-                text = "Movies"
+                text = if (hasResults) "Movies" else "No results"
             )
         }
     }
@@ -305,13 +322,10 @@ private fun ContentPreview() {
     )
 
     val previewList = listOf(previewItem, previewItem, previewItem)
-    val suggestions = listOf(
-        MovieSuggestions(0, "Deadpool"),
-        MovieSuggestions(1, "Batman")
-    )
+
 
     MovieList.Content(
         data = flowOf(PagingData.from(previewList)).collectAsLazyPagingItems(),
-        suggestions = flowOf(PagingData.from(suggestions)).collectAsLazyPagingItems(),
+        searchResults = flowOf(PagingData.from(previewList)).collectAsLazyPagingItems(),
         onAction = {})
 }
