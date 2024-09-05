@@ -21,4 +21,4 @@ class SearchMoviesUseCase(
     }
 }
 
-private const val DEFAULT_PAGE_SIZE = 20
+private const val DEFAULT_PAGE_SIZE = 10
