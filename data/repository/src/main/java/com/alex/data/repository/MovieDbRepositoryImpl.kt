@@ -8,6 +8,7 @@ import com.alex.data.mapper.toEntity
 import com.alex.data.remote.datasource.MovieDbRemoteDataSource
 import com.alex.domain.movies.entity.Movie
 import com.alex.domain.movies.entity.MovieDetails
+import com.alex.domain.movies.entity.MovieSuggestions
 import com.alex.domain.movies.entity.Sorting
 import com.alex.domain.movies.repository.MovieDbRepository
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,6 @@ class MovieDbRepositoryImpl(
     private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : MovieDbRepository {
     override fun getMoviesList(
-        keywords: String,
         sortBy: Sorting,
         releaseDate: String,
         pageSize: Int
@@ -32,7 +32,6 @@ class MovieDbRepositoryImpl(
             pagingSourceFactory = {
                 MovieListPagingSource(
                     remoteDataSource = remoteDataSource,
-                    keywords = keywords,
                     sortBy = sortBy,
                     releaseDate = releaseDate
                 )
@@ -47,4 +46,19 @@ class MovieDbRepositoryImpl(
         withContext(coroutineContext) {
             remoteDataSource.fetchMovieDetails(movieId).toEntity()
         }
+
+    override fun getMovieSuggestions(
+        query: String, pageSize: Int
+    ): Flow<PagingData<MovieSuggestions>> = Pager(
+        config = PagingConfig(pageSize = pageSize),
+        pagingSourceFactory = {
+            MovieSuggestionPagingSource(
+                remoteDataSource = remoteDataSource,
+                query = query
+            )
+        }
+    )
+        .flow
+        .map { data -> data.map { it.toEntity() } }
+        .flowOn(coroutineContext)
 }

@@ -5,29 +5,29 @@ import androidx.paging.PagingState
 import com.alex.data.mapper.toDto
 import com.alex.data.remote.datasource.MovieDbRemoteDataSource
 import com.alex.data.remote.dto.response.MovieDto
+import com.alex.data.remote.dto.response.MovieSuggestionDto
 import com.alex.data.remote.dto.response.PagedResponse
 import com.alex.domain.movies.entity.Sorting
 
-class MovieListPagingSource(
+class MovieSuggestionPagingSource(
     private val remoteDataSource: MovieDbRemoteDataSource,
-    private val sortBy: Sorting,
-    private val releaseDate: String
-) : PagingSource<Int, MovieDto>() {
-    override fun getRefreshKey(state: PagingState<Int, MovieDto>): Int? {
+    private val query: String,
+) : PagingSource<Int, MovieSuggestionDto>() {
+    override fun getRefreshKey(state: PagingState<Int, MovieSuggestionDto>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieDto> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieSuggestionDto> {
         return try {
             val page = params.key ?: 1
-            val response: PagedResponse<MovieDto> = remoteDataSource.fetchMovieList(
-                sortBy = sortBy.toDto(),
-                releaseDate = releaseDate,
-                page = page
-            )
+            val response: PagedResponse<MovieSuggestionDto> =
+                remoteDataSource.fetchMovieSuggestions(
+                    query = query,
+                    page = page
+                )
 
             LoadResult.Page(
                 data = response.results,

@@ -7,14 +7,13 @@ class GetMoviesUseCase(
     private val moviesRepository: MovieDbRepository
 ) {
     operator fun invoke(
-        keywords: String = "",
         releaseDate: String,
+        sortBy: Sorting = Sorting.RELEASE_DATE_DESC,
         pageSize: Int = DEFAULT_PAGE_SIZE
     ) = moviesRepository.getMoviesList(
-        keywords = keywords,
         pageSize = pageSize,
         releaseDate = releaseDate,
-        sortBy = Sorting.RELEASE_DATE_DESC
+        sortBy = sortBy
     )
 }
 

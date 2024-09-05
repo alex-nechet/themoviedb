@@ -40,12 +40,10 @@ object MovieDetails {
 
     @Composable
     fun Screen(
-        title: String,
         viewModel: MovieDetailsViewModel,
         onBackClick: () -> Unit
     ) {
         Content(
-            title = title,
             state = viewModel.uiState.collectAsState().value,
             onAction = { action ->
                 when (action) {
@@ -57,11 +55,17 @@ object MovieDetails {
 
     @Composable
     fun Content(
-        title: String,
         state: MovieDetailsUiState,
         onAction: (MovieDetailsAction) -> Unit,
         modifier: Modifier = Modifier
     ) {
+
+        val title = when(state){
+            is MovieDetailsUiState.Success -> state.movieDetails.title.orEmpty()
+            is MovieDetailsUiState.Error -> "Error"
+            else -> ""
+        }
+
         Scaffold(
             modifier = modifier,
             topBar = { TopBar(title = title, onBackClick = { onAction(MovieDetailsAction.Back) }) },
@@ -247,7 +251,6 @@ private fun MovieDetailPreview() {
 
 
     com.alex.themoviedb.ui.details.MovieDetails.Content(
-        title = "Movie Title",
         state = MovieDetailsUiState.Success(movieDetails),
         onAction = {}
     )

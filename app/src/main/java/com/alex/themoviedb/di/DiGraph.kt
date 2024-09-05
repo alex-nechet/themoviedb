@@ -5,6 +5,7 @@ import com.alex.data.remote.datasource.MovieDbRemoteDataSourceImpl
 import com.alex.data.repository.MovieDbRepositoryImpl
 import com.alex.domain.movies.repository.MovieDbRepository
 import com.alex.domain.movies.usecase.GetMovieDetailsUseCase
+import com.alex.domain.movies.usecase.SearchMoviesUseCase
 import com.alex.domain.movies.usecase.GetMoviesUseCase
 import com.alex.themoviedb.BuildConfig
 import com.alex.themoviedb.ui.details.MovieDetailsViewModel
@@ -32,6 +33,7 @@ val repository = module {
 val domain = module {
     factoryOf(::GetMoviesUseCase)
     factoryOf(::GetMovieDetailsUseCase)
+    factoryOf(::SearchMoviesUseCase)
 }
 
 val presentation = module {
