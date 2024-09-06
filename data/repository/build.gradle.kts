@@ -30,5 +30,4 @@ dependencies {
     testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
     testImplementation (libs.kotlinx.coroutines.test)
-
 }
