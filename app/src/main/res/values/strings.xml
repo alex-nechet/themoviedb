@@ -9,4 +9,7 @@
     <string name="production">Production</string>
     <string name="production_countries">Production Countries</string>
     <string name="search">Search</string>
+    <string name="movies">Movies</string>
+    <string name="no_results">No results</string>
+    <string name="close_suggestions">Close Suggestions</string>
 </resources>

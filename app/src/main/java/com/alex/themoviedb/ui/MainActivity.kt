@@ -11,7 +11,6 @@ import com.alex.themoviedb.navigation.appGraph
 import com.alex.themoviedb.theme.TheMovieDbTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

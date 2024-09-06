@@ -1,7 +1,6 @@
 package com.alex.themoviedb.ui.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,21 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,6 +40,8 @@ import com.alex.themoviedb.buildImageWithSize
 import com.alex.themoviedb.navigation.Route
 import com.alex.themoviedb.ui.common.ErrorContent
 import com.alex.themoviedb.ui.common.PosterAndOverview
+import com.alex.themoviedb.ui.list.search.AutocompleteContent
+import com.alex.themoviedb.ui.list.search.MoviesSearchBar
 import kotlinx.coroutines.flow.flowOf
 
 object MovieList {
@@ -61,12 +55,14 @@ object MovieList {
         val data = viewModel.movies.collectAsLazyPagingItems()
         val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
         val query = viewModel.queryState.collectAsState()
+        val payload = if (query.value.isEmpty()) data else searchResults
+        val showSuggestions = remember { mutableStateOf(false) }
 
         Content(
-            data = data,
-            searchResults = searchResults,
-            query = query.value,
             modifier = modifier,
+            payload = payload,
+            query = query.value,
+            showSuggestions = showSuggestions.value,
             onAction = { action ->
                 when (action) {
                     is ListScreenAction.OpenDetails -> navigate(
@@ -74,102 +70,61 @@ object MovieList {
                     )
 
                     ListScreenAction.Retry -> data.retry()
-                    is ListScreenAction.Search -> viewModel.setQuery(action.query)
+                    is ListScreenAction.Search -> {
+                        viewModel.setQuery(action.query)
+                        showSuggestions.value = true
+                    }
+
+                    ListScreenAction.CloseSuggestions -> {
+                        showSuggestions.value = false
+                    }
                 }
             }
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun Content(
-        data: LazyPagingItems<Movie>,
-        searchResults: LazyPagingItems<Movie>,
+        showSuggestions: Boolean,
+        payload: LazyPagingItems<Movie>,
         query: String,
         modifier: Modifier = Modifier,
         onAction: (ListScreenAction) -> Unit,
     ) {
-        SearchBar(
-            modifier = modifier.fillMaxSize(),
-            query = query,
-            active = true,
-            placeholder = { Text(text = stringResource(R.string.search)) },
-            onSearch = {},
-            onQueryChange = { onAction(ListScreenAction.Search(it)) },
-            onActiveChange = {},
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                )
-            },
-            trailingIcon = {
-                if (query.isNotEmpty()) {
-                    IconButton(
-                        onClick = { onAction(ListScreenAction.Search("")) },
-                        content = {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = null,
-                            )
-                        }
+        val isSuggestionsVisible = showSuggestions &&
+                query.isNotEmpty() &&
+                payload.itemCount > 1
+
+        Box(modifier = modifier) {
+            MoviesSearchBar(
+                query = query,
+                onAction = onAction,
+                content = {
+                    if (isSuggestionsVisible) {
+                        AutocompleteContent(
+                            searchResults = payload,
+                            onItemClick = {
+                                onAction(ListScreenAction.Search(it))
+                                onAction(ListScreenAction.CloseSuggestions)
+                            },
+                            onCloseClick = { onAction(ListScreenAction.CloseSuggestions) }
+                        )
+                    }
+
+                    MainContent(
+                        data = payload,
+                        onAction = onAction
                     )
                 }
-            },
-            colors = SearchBarDefaults.colors(
-                containerColor = Color.Transparent,
-            ),
-            content = {
-                if (searchResults.itemCount > 1) {
-                    Card(
-                        modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .padding(if (query.isEmpty()) 0.dp else 16.dp)
-                                .wrapContentHeight()
-                                .fillMaxWidth(),
-                            state = rememberLazyListState(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(
-                                count = searchResults.itemCount,
-                                key = { it },
-                            ) { index ->
-                                val item = searchResults[index]
-                                item?.let {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                onAction(ListScreenAction.Search(item.title))
-                                            },
-                                        text = it.title
-                                    )
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-                val payload = if (query.isEmpty()) data else searchResults
-
-                MainContent(
-                    data = payload,
-                    onAction = onAction
-                )
-            }
-        )
+            )
+        }
     }
 }
 
 @Composable
 private fun MainContent(
-    modifier: Modifier = Modifier,
     data: LazyPagingItems<Movie>,
+    modifier: Modifier = Modifier,
     onAction: (ListScreenAction) -> Unit
 ) {
     LazyColumn(
@@ -182,7 +137,14 @@ private fun MainContent(
         item {
             PagingStateItem(
                 state = data.loadState.refresh,
-                content = { StickyHeader(hasResults = data.itemCount > 0) },
+                content = {
+                    StickyHeader(
+                        when {
+                            data.itemCount > 0 -> stringResource(R.string.movies)
+                            else -> stringResource(R.string.no_results)
+                        }
+                    )
+                },
                 onRetryClick = { onAction(ListScreenAction.Retry) }
             )
         }
@@ -207,7 +169,7 @@ private fun MainContent(
 }
 
 @Composable
-private fun StickyHeader(hasResults: Boolean, modifier: Modifier = Modifier) {
+private fun StickyHeader(title: String, modifier: Modifier = Modifier) {
     Card(modifier = modifier.fillMaxWidth()) {
         Text(
             modifier = Modifier
@@ -215,7 +177,7 @@ private fun StickyHeader(hasResults: Boolean, modifier: Modifier = Modifier) {
                 .padding(16.dp),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
-            text = if (hasResults) "Movies" else "No results"
+            text = title
         )
     }
 }
@@ -326,8 +288,8 @@ private fun ContentPreview() {
 
     val previewList = listOf(previewItem, previewItem, previewItem)
     MovieList.Content(
-        data = flowOf(PagingData.from(previewList)).collectAsLazyPagingItems(),
-        searchResults = flowOf(PagingData.from(previewList)).collectAsLazyPagingItems(),
+        payload = flowOf(PagingData.from(previewList)).collectAsLazyPagingItems(),
         query = previewItem.title,
+        showSuggestions = true,
         onAction = {})
 }
