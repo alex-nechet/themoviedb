@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.alex.themoviedb.R
+import com.alex.themoviedb.theme.Dimens
 
 @Composable
 fun ErrorContent(
@@ -21,8 +21,8 @@ fun ErrorContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(Dimens.SPACE_16.dp),
+        verticalArrangement = Arrangement.spacedBy(Dimens.SPACE_8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

@@ -38,6 +38,7 @@ import com.alex.themoviedb.ImageSize
 import com.alex.themoviedb.R
 import com.alex.themoviedb.buildImageWithSize
 import com.alex.themoviedb.navigation.Route
+import com.alex.themoviedb.theme.Dimens
 import com.alex.themoviedb.ui.common.ErrorContent
 import com.alex.themoviedb.ui.common.PosterAndOverview
 import com.alex.themoviedb.ui.list.search.AutocompleteContent
@@ -131,7 +132,7 @@ private fun MainContent(
         modifier = modifier
             .fillMaxSize(),
         state = rememberLazyListState(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SPACE_8.dp)
     ) {
 
         item {
@@ -174,7 +175,7 @@ private fun StickyHeader(title: String, modifier: Modifier = Modifier) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Dimens.SPACE_16.dp),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             text = title
@@ -209,7 +210,7 @@ private fun PagingItem(
 
                 AsyncImage(
                     modifier = Modifier
-                        .height(256.dp)
+                        .height(Dimens.CARD_HEIGHT.dp)
                         .align(Alignment.BottomCenter),
                     alpha = 0.2f,
                     model = it.backdropPath buildImageWithSize ImageSize.W500,

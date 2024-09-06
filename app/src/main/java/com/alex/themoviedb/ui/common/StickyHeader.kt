@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.alex.themoviedb.R
+import com.alex.themoviedb.theme.Dimens
 
 @Composable
 fun StickyHeader(title: String, modifier: Modifier = Modifier) {
@@ -19,7 +19,7 @@ fun StickyHeader(title: String, modifier: Modifier = Modifier) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Dimens.SPACE_16.dp),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             text = title

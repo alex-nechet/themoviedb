@@ -18,12 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.alex.domain.movies.entity.Movie
 import com.alex.themoviedb.R
+import com.alex.themoviedb.theme.Dimens
 import com.alex.themoviedb.ui.list.MovieList
 import kotlinx.coroutines.flow.flowOf
 
@@ -37,17 +37,17 @@ internal fun MovieList.AutocompleteContent(
     Card(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = Dimens.SPACE_8.dp),
     ) {
         Column {
             LazyColumn(
                 modifier =
                 Modifier
-                    .height(256.dp)
+                    .height(Dimens.CARD_HEIGHT.dp)
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(Dimens.SPACE_8.dp),
                 state = rememberLazyListState(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(Dimens.SPACE_8.dp)
             ) {
 
                 items(
@@ -68,7 +68,7 @@ internal fun MovieList.AutocompleteContent(
             }
 
             Button(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = Dimens.SPACE_16.dp),
                 onClick = onCloseClick,
                 content = {
                     Text(stringResource(R.string.close_suggestions))

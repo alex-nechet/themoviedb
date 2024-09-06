@@ -28,11 +28,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.alex.domain.movies.entity.Genres
 import com.alex.domain.movies.entity.MovieDetails
 import com.alex.domain.movies.entity.ProductionCountries
 import com.alex.themoviedb.R
+import com.alex.themoviedb.theme.Dimens
 import com.alex.themoviedb.ui.common.ErrorContent
 import com.alex.themoviedb.ui.common.PosterAndOverview
 
@@ -60,7 +60,7 @@ object MovieDetails {
         modifier: Modifier = Modifier
     ) {
 
-        val title = when(state){
+        val title = when (state) {
             is MovieDetailsUiState.Success -> state.movieDetails.title.orEmpty()
             is MovieDetailsUiState.Error -> "Error"
             else -> ""
@@ -126,7 +126,7 @@ object MovieDetails {
 
                 is MovieDetailsUiState.Success -> MovieDetailsMainContent(
                     movieDetails = state.movieDetails,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(Dimens.SPACE_16.dp)
                 )
             }
         }
@@ -151,7 +151,7 @@ object MovieDetails {
             PosterAndOverview(
                 posterPath = movieDetails.posterPath,
                 overview = movieDetails.overview,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(vertical = Dimens.SPACE_16.dp)
             )
 
             if (movieDetails.releaseDate.isNotEmpty()) {
@@ -198,7 +198,7 @@ object MovieDetails {
         if (chips.isNotEmpty()) {
             Row(modifier = modifier) {
                 Text(
-                    modifier = Modifier.padding(vertical = 12.dp),
+                    modifier = Modifier.padding(vertical = Dimens.SPACE_12.dp),
                     text = "${label}:"
                 )
 
@@ -208,7 +208,7 @@ object MovieDetails {
                 ) {
                     chips.forEach {
                         AssistChip(
-                            modifier = Modifier.padding(horizontal = 4.dp),
+                            modifier = Modifier.padding(horizontal = Dimens.SPACE_4.dp),
                             label = { Text(text = it) },
                             onClick = {})
                     }
@@ -219,7 +219,7 @@ object MovieDetails {
 
     @Composable
     private fun DetailsItem(values: Pair<String, String>) {
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+        Row(modifier = Modifier.padding(vertical = Dimens.SPACE_8.dp)) {
             Text(modifier = Modifier.weight(1f), text = "${values.first}:")
             Text(modifier = Modifier, text = values.second)
         }

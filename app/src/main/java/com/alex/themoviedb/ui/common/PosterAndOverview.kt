@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.alex.themoviedb.ImageSize
 import com.alex.themoviedb.buildImageWithSize
+import com.alex.themoviedb.theme.Dimens
 
 @Composable
 fun PosterAndOverview(
@@ -26,7 +26,7 @@ fun PosterAndOverview(
     if (posterPath.isNotEmpty() || overview.isNotEmpty()) {
         Row(modifier = modifier) {
             AsyncImage(
-                modifier = Modifier.height(256.dp),
+                modifier = Modifier.height(Dimens.CARD_HEIGHT.dp),
                 model = posterPath buildImageWithSize ImageSize.W500,
                 contentScale = ContentScale.Fit,
                 contentDescription = null
@@ -34,7 +34,7 @@ fun PosterAndOverview(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = Dimens.SPACE_8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 text = overview,
                 maxLines = maxLines,
