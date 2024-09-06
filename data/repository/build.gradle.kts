@@ -15,6 +15,9 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -24,5 +27,8 @@ dependencies {
     implementation (libs.androidx.paging.runtime)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
+    testImplementation (libs.kotlinx.coroutines.test)
+
 }
